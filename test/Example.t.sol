@@ -13,13 +13,13 @@ contract ExampleTest is Test, TokenTester {
 
     function setUp() public {}
 
-    function testZeroBalance() public usesERC20TokenTester {
+    function testZeroBalance() public tokenTester(Tokens.ERC20) {
         // showcase how to use `tokenTest` in a totally useless test
         vault = new MyContract(ERC20(address(tokenTest)));
         assertEq(tokenTest.balanceOf(address(this)), 0);
     }
 
-    function testDeposit() public usesERC20TokenTester {
+    function testDeposit() public tokenTester(Tokens.ERC20) {
         vault = new MyContract(ERC20(address(tokenTest)));
         deal(address(tokenTest), alice, 100);
 
@@ -32,7 +32,7 @@ contract ExampleTest is Test, TokenTester {
         assertEq(vault.balanceOf(alice) != 0, true);
     }
 
-    function testWithdraw() public usesERC20TokenTester {
+    function testWithdraw() public tokenTester(Tokens.ERC20) {
         vault = new MyContract(ERC20(address(tokenTest)));
         deal(address(tokenTest), alice, 100);
 

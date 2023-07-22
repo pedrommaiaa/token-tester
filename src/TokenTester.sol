@@ -35,6 +35,31 @@ contract TokenTester is Test {
     string[] public tokenNames;
     string public tokenNameStr;
 
+    enum Tokens {
+        WETH,
+        ERC20,
+        ERC20Uint96,
+        ERC20Pausable,
+        ERC20NoRevert,
+        ERC20DaiPermit,
+        ERC20BlockList,
+        ERC20Reentrant,
+        ERC20Upgradable,
+        ERC20TransferFee,
+        ERC20LowDecimals,
+        ERC20HighDecimals,
+        ERC20ApprovalRace,
+        ERC20ReturnsFalse,
+        ERC20MissingReturns,
+        ERC20Proxied,
+        ERC20Bytes32Metadata,
+        ERC20TransferFromSelf,
+        ERC20ApprovalToZeroAddress,
+        ERC20ApprovalWithZeroValue,
+        ERC20TransferToZeroAddress,
+        ERC20TransferWithZeroValue
+    }
+
     constructor() {
         tokens.push(address(new WETH()));
         tokenNames.push("WETH");
@@ -114,12 +139,12 @@ contract TokenTester is Test {
         }
     }
 
-    modifier usesERC20TokenTester() {
+    modifier tokenTester(Tokens index) {
         // short circuit if TOKEN_TEST is not enabled
         bool enabled = vm.envBool("TOKEN_TEST");
         if (!enabled) {
             // default to ERC20
-            tokenTest = IERC20(address(tokens[0]));
+            tokenTest = IERC20(address(tokens[uint256(index)]));
             _;
             return;
         }
@@ -145,22 +170,5 @@ contract TokenTester is Test {
 
             vm.ffi(inputs);
         }
-    }
-
-    modifier usesTokenTester() {
-        uint256 i;
-        for (i; i < tokens.length;) {
-            tokenTest = IERC20(tokens[i]);
-            _;
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    modifier usesSingleToken(uint256 index) {
-        vm.assume(index < tokens.length);
-        tokenTest = IERC20(tokens[index]);
-        _;
     }
 }
